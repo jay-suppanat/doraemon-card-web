@@ -1,4 +1,3 @@
-import "./Card.css"
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -27,11 +26,27 @@ const mapCardText: Record<string, string> = {
     "7": "7",
     "8": "8",
     "9": "9",
-    "0": "0",
+    "0": "10",
     "j": "J",
     "q": "Q",
     "k": "K",
     "a": "A"
+}
+
+const mapCommand: Record<string, string> = {
+    "2": "สอง",
+    "3": "สาม",
+    "4": "สี่",
+    "5": "ห้า",
+    "6": "หก",
+    "7": "เจ็ด",
+    "8": "แปด",
+    "9": "เก้า",
+    "0": "สิบ",
+    "j": "แจ๊ค",
+    "q": "ควีน",
+    "k": "คิง",
+    "a": "เอด"
 }
 
 const cardSuit: Record<number, string> = {
@@ -55,6 +70,7 @@ const Card = () => {
     const [gameState, setGameState] = useState(GameState.END)
     const [cardFlipState, setCardFlipState] = useState(CardFlipState.BACK)
     const [showingCardNumber, setShowingCardNumber] = useState("")
+    const [cardCommand, setCardCommand] = useState("")
 
     function touchCardButton() {
         if (gameState == GameState.END) {
@@ -66,17 +82,23 @@ const Card = () => {
     }
 
     function randomCard() {
-        handleMapCard(cardArray[Math.floor(Math.random() * cardArray.length)])
+        const randomCard: string = cardArray[Math.floor(Math.random() * cardArray.length)]
+        processMapCard(randomCard)
+        processMapCommand(randomCard)
         setCardFlipState(cardFlipState === CardFlipState.BACK ? CardFlipState.FRONT : CardFlipState.BACK)
     }
 
-    function handleMapCard(card: string) {
-        if (!card) { return "" }
-
+    function processMapCard(card: string) {
+        if (!card) { return }
         const cardNumber = mapCardText[card.charAt(0).toLowerCase()]
         const suit = cardSuit[card.length]
-
         setShowingCardNumber(cardNumber + suit)
+    }
+
+    function processMapCommand(card: string) {
+        if (!card) { return } 
+        const cardCommand = mapCommand[card.charAt(0).toLowerCase()]
+        setCardCommand(cardCommand)
     }
 
     return (
@@ -108,6 +130,10 @@ const Card = () => {
                         </div>
                     </motion.div>
                 </AnimatePresence>
+
+                <p className="mt-[50px] font-mono text-[20px] font-normal">
+                    {cardCommand}
+                </p>
             </button>
         </div>
     )
