@@ -101,42 +101,48 @@ const Card = () => {
         setCardCommand(cardCommand)
     }
 
-    return (
-        <div className='flex flex-col gap-8 justify-center items-center m-3.5'>
-            <h1 className='font-mono text-3xl font-bold'>Doraemon Card</h1>
+    // ปรับแก้ตรงส่วน return ของฟังก์ชัน Card
+return (
+    // เพิ่ม min-h-screen เพื่อให้กินพื้นที่เต็มจอแต่ขยายได้ และใช้ py-10 เพื่อเพิ่มพื้นที่บนล่าง
+    <div className='flex flex-col gap-8 justify-start items-center min-h-screen w-full bg-[#fef08a] py-10 px-3.5 overflow-y-auto'>
+        <h1 className='font-mono text-3xl font-bold'>Doraemon Card</h1>
 
-            <button onClick={touchCardButton} className="outline-none">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={showingCardNumber}
-                        initial={{ rotateY: -90, scale: 0.8, opacity: 0 }}
-                        animate={{ rotateY: 0, scale: 1, opacity: 1 }}
-                        exit={{ rotateY: 90, scale: 0.8, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                        className="w-full h-full"
-                    >
-                        <div className='bg-yellow-400 p-[20px] w-[300px] aspect-[1/1.5] rounded-card shadow-xl overflow-hidden'>
-                            <div className='bg-red-500 w-full h-full rounded-card flex justify-center items-center shadow-inner'>
-                                {gameState === GameState.PLAYING ? (
-                                    <p className="text-white text-6xl font-black font-mono drop-shadow-lg">
-                                        {showingCardNumber}
-                                    </p>
-                                ) : (
-                                    <p className="text-white text-xl font-bold animate-pulse text-center p-4">
-                                        Touch to Start Game
-                                    </p>
-                                )}
-                            </div>
+        <button onClick={touchCardButton} className="outline-none focus:outline-none active:scale-95 transition-transform">
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={showingCardNumber}
+                    initial={{ rotateY: -90, scale: 0.8, opacity: 0 }}
+                    animate={{ rotateY: 0, scale: 1, opacity: 1 }}
+                    exit={{ rotateY: 90, scale: 0.8, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    // ปรับขนาดให้เป็น responsive มากขึ้น โดยใช้ max-w
+                    className="relative w-[300px] max-w-[85vw] mx-auto"
+                >
+                    <div className='bg-yellow-400 p-5 aspect-[1/1.5] rounded-[30px] shadow-xl overflow-hidden'>
+                        <div className='bg-red-500 w-full h-full rounded-[20px] flex justify-center items-center shadow-inner'>
+                            {gameState === GameState.PLAYING ? (
+                                <p className="text-white text-6xl font-black font-mono drop-shadow-lg">
+                                    {showingCardNumber}
+                                </p>
+                            ) : (
+                                <p className="text-white text-xl font-bold animate-pulse text-center p-4">
+                                    Touch to Start Game
+                                </p>
+                            )}
                         </div>
-                    </motion.div>
-                </AnimatePresence>
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+        </button>
 
-                <p className="mt-[50px] font-mono text-[20px] font-normal">
-                    {cardCommand}
-                </p>
-            </button>
+        {/* ย้ายข้อความคำสั่งออกมาข้างนอกปุ่ม เพื่อไม่ให้ไปรบกวนพื้นที่ Click ของการสับไพ่ */}
+        <div className="min-h-[60px] flex items-center justify-center">
+             <p className="font-mono text-[24px] font-normal">
+                {cardCommand}
+            </p>
         </div>
-    )
+    </div>
+)
 }
 
 export default Card
