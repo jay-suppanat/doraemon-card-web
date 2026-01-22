@@ -104,7 +104,7 @@ const Card = () => {
     // ปรับแก้ตรงส่วน return ของฟังก์ชัน Card
 return (
     // เพิ่ม min-h-screen เพื่อให้กินพื้นที่เต็มจอแต่ขยายได้ และใช้ py-10 เพื่อเพิ่มพื้นที่บนล่าง
-    <div className='flex flex-col gap-8 justify-start items-center min-h-screen w-full bg-[#fef08a] py-10 px-3.5 overflow-y-auto'>
+    <div className='flex flex-col gap-8 justify-start items-center min-h-screen w-full bg-black py-10 px-3.5 overflow-y-auto'>
         <h1 className='font-mono text-3xl font-bold'>Doraemon Card</h1>
 
         <button onClick={touchCardButton} className="outline-none focus:outline-none active:scale-95 transition-transform">
