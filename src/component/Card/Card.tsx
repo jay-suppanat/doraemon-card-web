@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cardArrayConstants, kingCardArrayConstants } from "../../support file/constants.tsx"
+import ModalCard from "../ModalCard/ModalCard.tsx"
 
 let cardArray: string[] = [
     "2", "22", "222", "2222",
@@ -36,7 +37,7 @@ const mapCardText: Record<string, string> = {
 
 let kingCardArray: string[] = ["k", "kk", "kkk", "kkkk"]
 
-const mapCommand: Record<string, string> = {
+let mapCommand: Record<string, string> = {
     "2": "กินครึ่งแก้ว",
     "3": "คนทางซ้ายกิน",
     "4": "คนทางขวากิน",
@@ -74,6 +75,7 @@ const Card = () => {
     const [cardFlipState, setCardFlipState] = useState(CardFlipState.BACK)
     const [showingCardNumber, setShowingCardNumber] = useState("")
     const [cardCommand, setCardCommand] = useState("")
+    const [isShowAlert, setIsShowAlert] = useState(false)
 
     function touchCardButton() {
         if (gameState == GameState.END) {
@@ -84,10 +86,35 @@ const Card = () => {
         }
     }
 
+    function touchNewGameButton() {
+        cardArray = cardArrayConstants
+        kingCardArray = kingCardArrayConstants
+    }
+
+    function touchEditButton() {
+        setIsShowAlert(true)
+    }
+
+    function processEditedCommand(editedCommand: Record<string, string>) {
+        setIsShowAlert(false)
+        mapCommand = editedCommand
+    }
+
+    function touchResetGameButton() {
+        const confirmDone = window.confirm("คุณต้องการเริ่มเกมใหม่ใช่หรือไม่?");
+        if (confirmDone) {
+            cardArray = cardArrayConstants
+            kingCardArray = kingCardArrayConstants
+            setGameState(GameState.END)
+            setCardFlipState(CardFlipState.BACK)
+            setShowingCardNumber("")
+            setCardCommand("")
+        }
+    }
+
     function randomCard() {
         if (kingCardArray.length === 0) {
-            // kingCardArray = cardArrayConstants
-            // cardArray = kingCardArrayConstants
+            setGameState(GameState.END)
             alert("Game End")
             return
         }
@@ -99,10 +126,6 @@ const Card = () => {
         }
 
         cardArray.splice(cardArray.indexOf(randomCard), 1)
-
-        console.log(randomCard)
-        console.log(cardArray)
-        console.log(kingCardArray)
 
         processMapCard(randomCard)
         processMapCommand(randomCard)
@@ -117,53 +140,77 @@ const Card = () => {
     }
 
     function processMapCommand(card: string) {
-        if (!card) { return } 
+        if (!card) { return }
         const cardCommand = mapCommand[card.charAt(0).toLowerCase()]
         setCardCommand(cardCommand)
     }
 
-    // ปรับแก้ตรงส่วน return ของฟังก์ชัน Card
-return (
-    // เพิ่ม min-h-screen เพื่อให้กินพื้นที่เต็มจอแต่ขยายได้ และใช้ py-10 เพื่อเพิ่มพื้นที่บนล่าง
-    <div className='flex flex-col gap-8 justify-start items-center min-h-screen w-full bg-black py-10 px-3.5 overflow-y-auto'>
-        <h1 className='font-mono text-3xl font-bold text-white'>
-            Doraemon Card
-        </h1>
+    return (
+        <div>
+            {isShowAlert && (
+                <ModalCard
+                    message="คุณต้องการแก้ไขคำสั่งใช่หรือไม่?"
+                    isOpen={isShowAlert}
+                    onConfirm={(result) => {
+                        setIsShowAlert(false)
+                        if (result) {
+                            setIsShowAlert(true)
+                        }
+                    }}
+                />
+            )}
 
-        <button onClick={touchCardButton}>
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={showingCardNumber}
-                    initial={{ rotateY: -90, scale: 0.8, opacity: 0 }}
-                    animate={{ rotateY: 0, scale: 1, opacity: 1 }}
-                    exit={{ rotateY: 90, scale: 0.8, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="relative w-[300px] max-w-[85vw] mx-auto"
-                >
-                    <div className='flex bg-yellow-400 p-5 aspect-[1/1.5] rounded-[30px] shadow-xl overflow-hidden'>
-                        <div className='flex-1 bg-red-500 rounded-[20px] flex justify-center items-center shadow-inner'>
-                            {gameState === GameState.PLAYING ? (
-                                <p className="text-white text-6xl font-black font-mono drop-shadow-lg">
-                                    {showingCardNumber}
-                                </p>
-                            ) : (
-                                <p className="text-white text-xl font-bold animate-pulse text-center p-4">
-                                    Touch to Start Game
-                                </p>
-                            )}
+            <div className='flex flex-col gap-2 justify-start items-center min-h-screen w-full bg-black py-10 px-3.5 overflow-y-auto'>
+                <h1 className='font-mono text-3xl font-bold text-white'>
+                    Doraemon Card
+                </h1>
+
+                <div>
+                    {gameState === GameState.END ? (
+                        <div className="flex flex-row gap-10 justify-center items-center">
+                            <button onClick={touchNewGameButton} className="text-white bg-green-500 px-2.5 py-1 rounded-card">New Game</button>
+                            <button onClick={touchEditButton} className="text-white bg-blue-500 px-2.5 py-1 rounded-card">Edit</button>
                         </div>
-                    </div>
-                </motion.div>
-            </AnimatePresence>
-        </button>
+                    ) : (
+                        <button onClick={touchResetGameButton} className="text-white bg-red-500 px-2.5 py-1 rounded-card">Reset Game</button>
+                    )}
+                </div>
 
-        <div className="min-h-[60px] flex items-center justify-center">
-             <p className="font-mono text-[24px] font-normal text-white">
-                {cardCommand}
-            </p>
+                <button onClick={touchCardButton}>
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={showingCardNumber}
+                            initial={{ rotateY: -90, scale: 0.8, opacity: 0 }}
+                            animate={{ rotateY: 0, scale: 1, opacity: 1 }}
+                            exit={{ rotateY: 90, scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="relative w-[300px] max-w-[85vw] mx-auto"
+                        >
+                            <div className='flex bg-yellow-400 p-5 aspect-[1/1.5] rounded-[30px] shadow-xl overflow-hidden'>
+                                <div className='flex-1 bg-red-500 rounded-[20px] flex justify-center items-center shadow-inner'>
+                                    {gameState === GameState.PLAYING ? (
+                                        <p className="text-white text-6xl font-black font-mono drop-shadow-lg">
+                                            {showingCardNumber}
+                                        </p>
+                                    ) : (
+                                        <p className="text-white text-xl font-bold animate-pulse text-center p-4">
+                                            Touch to Start Game
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </AnimatePresence>
+                </button>
+
+                <div className="min-h-[60px] flex items-center justify-center">
+                    <p className="font-mono text-[24px] font-normal text-white">
+                        {cardCommand}
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-)
+    )
 }
 
 export default Card
