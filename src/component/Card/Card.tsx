@@ -120,8 +120,8 @@ return (
                     // ปรับขนาดให้เป็น responsive มากขึ้น โดยใช้ max-w
                     className="relative w-[300px] max-w-[85vw] mx-auto"
                 >
-                    <div className='bg-yellow-400 p-5 aspect-[1/1.5] rounded-[30px] shadow-xl overflow-hidden'>
-                        <div className='bg-red-500 w-full h-full rounded-[20px] flex justify-center items-center shadow-inner'>
+                    <div className='flex bg-yellow-400 p-5 aspect-[1/1.5] rounded-[30px] shadow-xl overflow-hidden'>
+                        <div className='flex-1 bg-red-500 rounded-[20px] flex justify-center items-center shadow-inner'>
                             {gameState === GameState.PLAYING ? (
                                 <p className="text-white text-6xl font-black font-mono drop-shadow-lg">
                                     {showingCardNumber}
