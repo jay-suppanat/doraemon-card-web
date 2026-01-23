@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cardArrayConstants, kingCardArrayConstants } from "../../support file/constants.tsx"
 
-const cardArray: string[] = [
+let cardArray: string[] = [
     "2", "22", "222", "2222",
     "3", "33", "333", "3333",
     "4", "44", "444", "4444",
@@ -33,20 +34,22 @@ const mapCardText: Record<string, string> = {
     "a": "A"
 }
 
+let kingCardArray: string[] = ["k", "kk", "kkk", "kkkk"]
+
 const mapCommand: Record<string, string> = {
-    "2": "สอง",
-    "3": "สาม",
-    "4": "สี่",
-    "5": "ห้า",
-    "6": "หก",
-    "7": "เจ็ด",
-    "8": "แปด",
-    "9": "เก้า",
-    "0": "สิบ",
-    "j": "แจ๊ค",
-    "q": "ควีน",
-    "k": "คิง",
-    "a": "เอด"
+    "2": "กินครึ่งแก้ว",
+    "3": "คนทางซ้ายกิน",
+    "4": "คนทางขวากิน",
+    "5": "เลือกใครเป็นบัดดี้ก็ได้\nหรือ\nยกเลิกการเป็นบัดดี้",
+    "6": "เลือกหมวดหมู่มา 1 หมวด\nใครตอบผิด ตอบซ้ำ\nตอบไม่ได้ กินหมดแก้ว",
+    "7": "เลือกตัวเลขมา 1 ตัว\nห้ามพูดเลขที่มีเลขที่เลือก\nหรือหารด้วยตัวเลขที่เลือกลงตัว",
+    "8": "เก็บการ์ดนี้ไว้\nเมื่อใช้จะสามารถไปเข้าห้องน้ำได้\nใช้ตอนไหนก็ได้",
+    "9": "ทำท่าจับคางตอนไหนก็ได้\nแล้วให้คนอื่นทำตาม\nใครทำคนสุดท้าย กินหมดแก้ว",
+    "0": "สร้างคำขึ้นมา 1 คำ ห้ามพูดคำนี้\nจนกว่าเกมจะจบ",
+    "j": "เลือกใบ้ใครก็ได้ 1 คน\n(จะยกเลิกเมื่อมีคนคุยด้วย)",
+    "q": "สั่งใครกินก็ได้",
+    "k": "K ใบแรก: สั่งว่าให้ทำไร\nK ใบสอง: จำนวนเท่าไร\nK ใบสาม: ทำที่ไหน\nK ใบสี่: ให้ใครทำ",
+    "a": "กินหมดแก้ว"
 }
 
 const cardSuit: Record<number, string> = {
@@ -82,7 +85,25 @@ const Card = () => {
     }
 
     function randomCard() {
+        if (kingCardArray.length === 0) {
+            // kingCardArray = cardArrayConstants
+            // cardArray = kingCardArrayConstants
+            alert("Game End")
+            return
+        }
+
         const randomCard: string = cardArray[Math.floor(Math.random() * cardArray.length)]
+
+        if (randomCard.includes("k")) {
+            kingCardArray.shift()
+        }
+
+        cardArray.splice(cardArray.indexOf(randomCard), 1)
+
+        console.log(randomCard)
+        console.log(cardArray)
+        console.log(kingCardArray)
+
         processMapCard(randomCard)
         processMapCommand(randomCard)
         setCardFlipState(cardFlipState === CardFlipState.BACK ? CardFlipState.FRONT : CardFlipState.BACK)
@@ -109,7 +130,7 @@ return (
             Doraemon Card
         </h1>
 
-        <button onClick={touchCardButton} className="outline-none focus:outline-none active:scale-95 transition-transform">
+        <button onClick={touchCardButton}>
             <AnimatePresence mode="wait">
                 <motion.div
                     key={showingCardNumber}
@@ -117,7 +138,6 @@ return (
                     animate={{ rotateY: 0, scale: 1, opacity: 1 }}
                     exit={{ rotateY: 90, scale: 0.8, opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
-                    // ปรับขนาดให้เป็น responsive มากขึ้น โดยใช้ max-w
                     className="relative w-[300px] max-w-[85vw] mx-auto"
                 >
                     <div className='flex bg-yellow-400 p-5 aspect-[1/1.5] rounded-[30px] shadow-xl overflow-hidden'>
@@ -137,7 +157,6 @@ return (
             </AnimatePresence>
         </button>
 
-        {/* ย้ายข้อความคำสั่งออกมาข้างนอกปุ่ม เพื่อไม่ให้ไปรบกวนพื้นที่ Click ของการสับไพ่ */}
         <div className="min-h-[60px] flex items-center justify-center">
              <p className="font-mono text-[24px] font-normal text-white">
                 {cardCommand}
