@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 interface ModalCardProps {
     message: string;
@@ -11,7 +11,6 @@ interface ModalCardProps {
 const ModalCard = ({ message, command, cardName, isOpen, onSuccess }: ModalCardProps) => {
     const [localData, setLocalData] = useState<Record<string, string>>(command);
 
-    // กำหนดลำดับที่ต้องการให้แสดงผล เพื่อแก้ปัญหาเลข "0" กระโดดไปข้างหน้า
     const displayOrder = ["2", "3", "4", "5", "6", "7", "8", "9", "0", "j", "q", "k", "a"];
 
     useEffect(() => {
