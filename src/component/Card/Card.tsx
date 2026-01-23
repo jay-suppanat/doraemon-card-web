@@ -149,13 +149,16 @@ const Card = () => {
         <div>
             {isShowAlert && (
                 <ModalCard
-                    message="คุณต้องการแก้ไขคำสั่งใช่หรือไม่?"
+                    message="แก้ไขข้อมูลไพ่"
+                    command={mapCommand}
+                    cardName={mapCardText}
                     isOpen={isShowAlert}
-                    onConfirm={(result) => {
-                        setIsShowAlert(false)
-                        if (result) {
-                            setIsShowAlert(true)
+                    onSuccess={(updatedData) => {
+                        if (updatedData) {
+                            processEditedCommand(updatedData)
                         }
+
+                        setIsShowAlert(false);
                     }}
                 />
             )}
